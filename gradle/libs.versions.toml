@@ -10,6 +10,8 @@ material = "1.12.0"
 constraintlayout = "2.2.0"
 navigationFragmentKtx = "2.8.5"
 navigationUiKtx = "2.8.5"
+dagger="2.42"
+retrofit="2.9.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -21,6 +23,9 @@ material = { group = "com.google.android.material", name = "material", version.r
 androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
 androidx-navigation-fragment-ktx = { group = "androidx.navigation", name = "navigation-fragment-ktx", version.ref = "navigationFragmentKtx" }
 androidx-navigation-ui-ktx = { group = "androidx.navigation", name = "navigation-ui-ktx", version.ref = "navigationUiKtx" }
+dagger = { group = "com.google.dagger", name = "dagger", version.ref = "dagger" }
+retrofit={group="com.squareup.retrofit2",name = "retrofit",version.ref="retrofit"}
+rerofit-gson={group="com.squareup.retrofit2",name = "converter-gson",version.ref="retrofit"}
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

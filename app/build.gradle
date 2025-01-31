@@ -1,11 +1,12 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    id 'kotlin-kapt'
 }
 
 android {
     namespace 'com.yogesh.newsapp'
-    compileSdk 34
+    compileSdk 35
 
     defaultConfig {
         applicationId "com.yogesh.newsapp"
@@ -43,6 +44,13 @@ dependencies {
     implementation libs.androidx.constraintlayout
     implementation libs.androidx.navigation.fragment.ktx
     implementation libs.androidx.navigation.ui.ktx
+    //dagger
+    implementation libs.dagger
+    kapt "com.google.dagger:dagger-compiler:2.55"
+    //retrofit
+    implementation libs.retrofit
+    implementation libs.rerofit.gson
+
     testImplementation libs.junit
     androidTestImplementation libs.androidx.junit
     androidTestImplementation libs.androidx.espresso.core
