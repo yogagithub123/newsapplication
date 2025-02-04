@@ -10,8 +10,14 @@ material = "1.12.0"
 constraintlayout = "2.2.0"
 navigationFragmentKtx = "2.8.5"
 navigationUiKtx = "2.8.5"
-dagger="2.42"
+dagger="2.55"
 retrofit="2.9.0"
+glide="5.0.0-rc01"
+lifecycleViewmodelAndroid = "2.8.7"
+okhttp="4.11.0"
+okhttpInterceptor="4.11.0"
+browser = "1.8.0"
+
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -26,6 +32,12 @@ androidx-navigation-ui-ktx = { group = "androidx.navigation", name = "navigation
 dagger = { group = "com.google.dagger", name = "dagger", version.ref = "dagger" }
 retrofit={group="com.squareup.retrofit2",name = "retrofit",version.ref="retrofit"}
 rerofit-gson={group="com.squareup.retrofit2",name = "converter-gson",version.ref="retrofit"}
+glide = { group = "com.github.bumptech.glide", name = "glide", version.ref = "glide" }
+androidx-lifecycle-viewmodel-android = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-android", version.ref = "lifecycleViewmodelAndroid" }
+okhttp = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttp" }
+okhttp-interceptor = { group = "com.squareup.okhttp3", name = "logging-interceptor", version.ref = "okhttpInterceptor" }
+androidx-browser = { group = "androidx.browser", name = "browser", version.ref = "browser" }
+
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
