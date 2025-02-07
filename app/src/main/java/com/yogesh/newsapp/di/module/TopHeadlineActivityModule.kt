@@ -9,7 +9,7 @@ import com.yogesh.newsapp.ui.topheadlines.TopHeadlineAdapter
 import com.yogesh.newsapp.ui.topheadlines.TopHeadlineViewModel
 import dagger.Module
 import dagger.Provides
-import me.amitshekhar.newsapp.ui.base.ViewModelProviderFactory
+import com.yogesh.newsapp.ui.common.ViewModelProviderFactory
 import java.util.ArrayList
 
 @Module

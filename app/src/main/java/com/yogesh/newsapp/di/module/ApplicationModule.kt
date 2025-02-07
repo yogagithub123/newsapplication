@@ -55,6 +55,6 @@ class ApplicationModule(private val application: NewsApplication) {
 
     @Provides
     fun provideLoggingInterceptor(): HttpLoggingInterceptor {
-        return LoggingInterceptor.provideLoggingInterceptor()
+        return HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)
     }
 }
