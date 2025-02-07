@@ -17,16 +17,20 @@ import com.yogesh.newsapp.databinding.ActivityTopHeadlineBinding
 import com.yogesh.newsapp.di.component.DaggerTopHeadlineActivityComponent
 import com.yogesh.newsapp.di.component.TopHeadlineActivityComponent
 import com.yogesh.newsapp.di.module.TopHeadlineActivityModule
+import com.yogesh.newsapp.ui.common.UiState
+import com.yogesh.newsapp.utils.Constant.COUNTRY
+import com.yogesh.newsapp.utils.Constant.RESOURCES
 import kotlinx.coroutines.launch
-import me.amitshekhar.newsapp.ui.base.UiState
 import javax.inject.Inject
 
 class TopHeadlineActivity : AppCompatActivity() {
     companion object{
-        private val EXTRAS_COUNTRY="country"
-        fun getStartIntent(context: Context,country:String):Intent{
+        private val EXTRAS_QUERY="query"
+        private val QUERY_NAME="query_name"
+        fun getStartIntent(context: Context,query:String,queryName:String):Intent{
             return Intent(context,TopHeadlineActivity::class.java).apply {
-                putExtra(EXTRAS_COUNTRY,country)
+                putExtra(EXTRAS_QUERY,query)
+                putExtra(QUERY_NAME,queryName)
             }
         }
     }
@@ -43,8 +47,18 @@ class TopHeadlineActivity : AppCompatActivity() {
         setContentView(binding.root)
         setUpUi()
         setupObserver()
+        getIntentAndFetchData()
     }
-
+    private fun getIntentAndFetchData() {
+        val query = intent.getStringExtra(EXTRAS_QUERY)
+        val queryName=intent.getStringExtra(QUERY_NAME)
+        Log.d("TAG*** ","query name "+ queryName)
+        if(query.equals(COUNTRY)){
+            viewModel.fetchNews()
+        }else if (query.equals(RESOURCES)){
+            viewModel.fetchNewsByResources(queryName!!)
+        }
+    }
     private fun setUpUi() {
         val recyclerView = binding.recyclerView
         recyclerView.layoutManager = LinearLayoutManager(this)
@@ -93,5 +107,10 @@ class TopHeadlineActivity : AppCompatActivity() {
             .topHeadlineActivityModule(TopHeadlineActivityModule(this))
             .build()
         topHeadlineActivityComponent.inject(this)
+    }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        finish()
     }
 }

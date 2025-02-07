@@ -17,6 +17,7 @@ lifecycleViewmodelAndroid = "2.8.7"
 okhttp="4.11.0"
 okhttpInterceptor="4.11.0"
 browser = "1.8.0"
+activity = "1.10.0"
 
 
 [libraries]
@@ -37,6 +38,7 @@ androidx-lifecycle-viewmodel-android = { group = "androidx.lifecycle", name = "l
 okhttp = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttp" }
 okhttp-interceptor = { group = "com.squareup.okhttp3", name = "logging-interceptor", version.ref = "okhttpInterceptor" }
 androidx-browser = { group = "androidx.browser", name = "browser", version.ref = "browser" }
+androidx-activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
 
 
 [plugins]
