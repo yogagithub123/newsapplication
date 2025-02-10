@@ -6,12 +6,14 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.SearchView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.yogesh.newsapp.NewsApplication
+import com.yogesh.newsapp.R
 import com.yogesh.newsapp.data.model.Article
 import com.yogesh.newsapp.databinding.ActivityTopHeadlineBinding
 import com.yogesh.newsapp.di.component.DaggerTopHeadlineActivityComponent
@@ -20,6 +22,8 @@ import com.yogesh.newsapp.di.module.TopHeadlineActivityModule
 import com.yogesh.newsapp.ui.common.UiState
 import com.yogesh.newsapp.utils.Constant.COUNTRY
 import com.yogesh.newsapp.utils.Constant.RESOURCES
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -52,7 +56,7 @@ class TopHeadlineActivity : AppCompatActivity() {
     private fun getIntentAndFetchData() {
         val query = intent.getStringExtra(EXTRAS_QUERY)
         val queryName=intent.getStringExtra(QUERY_NAME)
-        Log.d("TAG*** ","query name "+ queryName)
+        Log.d("TAG*** ","query name "+ query)
         if(query.equals(COUNTRY)){
             viewModel.fetchNews()
         }else if (query.equals(RESOURCES)){
@@ -69,7 +73,11 @@ class TopHeadlineActivity : AppCompatActivity() {
             )
         )
         recyclerView.adapter = adapter
+
+        val query=binding.searchView.getQueryTextChangeStateFlow()
+        viewModel.observeQueryChanges(query)
     }
+
 
     private fun setupObserver() {
         lifecycleScope.launch {
@@ -77,9 +85,14 @@ class TopHeadlineActivity : AppCompatActivity() {
                     when (it) {
                         is UiState.Success -> {
                             binding.progressBar.visibility = View.GONE
-                            renderList(it.data)
-                            Log.d("Data***","${it.data.size}")
-                            binding.recyclerView.visibility = View.VISIBLE
+                            if(it.data.isEmpty()){
+                                Toast.makeText(this@TopHeadlineActivity, R.string.no_record_found, Toast.LENGTH_LONG)
+                                    .show()
+                            }else {
+                                renderList(it.data)
+                                Log.d("Data***", "${it.data.size}")
+                                binding.recyclerView.visibility = View.VISIBLE
+                            }
                         }
                         is UiState.Loading -> {
                             binding.progressBar.visibility = View.VISIBLE
@@ -107,6 +120,20 @@ class TopHeadlineActivity : AppCompatActivity() {
             .topHeadlineActivityModule(TopHeadlineActivityModule(this))
             .build()
         topHeadlineActivityComponent.inject(this)
+    }
+
+    fun SearchView.getQueryTextChangeStateFlow(): StateFlow<String> {
+        val query = MutableStateFlow("")
+        setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                return true
+            }
+            override fun onQueryTextChange(newText: String): Boolean {
+                query.value = newText
+                return true
+            }
+        })
+        return query
     }
 
     override fun onBackPressed() {

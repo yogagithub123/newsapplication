@@ -48,6 +48,7 @@ class TopHeadlineAdapter(private val arrayList: ArrayList<Article>):RecyclerView
     }
 
     fun addData(list: List<Article>) {
+        arrayList.clear()
         arrayList.addAll(list)
     }
 }

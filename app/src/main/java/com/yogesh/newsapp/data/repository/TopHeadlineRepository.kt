@@ -22,4 +22,11 @@ class TopHeadlineRepository @Inject constructor(private val networkService: Netw
             emit(networkService.getHeadlineByResources(resources))
         }.map { it.articles }
     }
+
+    fun getHeadlinesByQuery(query: String): Flow<List<Article>> {
+        return flow {
+            emit(networkService.getHeadlineByQuery(query))
+        }.map { it.articles }
+    }
+
 }

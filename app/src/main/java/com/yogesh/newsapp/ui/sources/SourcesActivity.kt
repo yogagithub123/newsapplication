@@ -64,9 +64,14 @@ class SourcesActivity : AppCompatActivity() {
                 when (it) {
                     is UiState.Success -> {
                         binding.progressBar.visibility = View.GONE
-                        renderList(it.data)
-                        Log.d("Data***","${it.data.size}")
-                        binding.recyclerView.visibility = View.VISIBLE
+                        if (it.data.isEmpty()) {
+                            Toast.makeText(this@SourcesActivity, "No Data Found", Toast.LENGTH_LONG)
+                                .show()
+                        } else {
+                            renderList(it.data)
+                            Log.d("Data", "${it.data.size}")
+                            binding.recyclerView.visibility = View.VISIBLE
+                        }
                     }
                     is UiState.Loading -> {
                         binding.progressBar.visibility = View.VISIBLE
