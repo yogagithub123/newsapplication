@@ -2,6 +2,7 @@ package com.yogesh.newsapp.ui.topheadlines
 
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 
 import android.os.Bundle
 import android.util.Log
@@ -9,6 +10,7 @@ import android.view.View
 import android.widget.SearchView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.browser.customtabs.CustomTabsIntent
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -51,18 +53,9 @@ class TopHeadlineActivity : AppCompatActivity() {
         setContentView(binding.root)
         setUpUi()
         setupObserver()
-        getIntentAndFetchData()
+        viewModel.fetchNews()
     }
-    private fun getIntentAndFetchData() {
-        val query = intent.getStringExtra(EXTRAS_QUERY)
-        val queryName=intent.getStringExtra(QUERY_NAME)
-        Log.d("TAG*** ","query name "+ query)
-        if(query.equals(COUNTRY)){
-            viewModel.fetchNews()
-        }else if (query.equals(RESOURCES)){
-            viewModel.fetchNewsByResources(queryName!!)
-        }
-    }
+
     private fun setUpUi() {
         val recyclerView = binding.recyclerView
         recyclerView.layoutManager = LinearLayoutManager(this)
@@ -73,7 +66,11 @@ class TopHeadlineActivity : AppCompatActivity() {
             )
         )
         recyclerView.adapter = adapter
-
+        adapter.itemClickListener={
+            val builder = CustomTabsIntent.Builder()
+            val customTabsIntent = builder.build()
+            customTabsIntent.launchUrl(this, Uri.parse(it.url))
+        }
         val query=binding.searchView.getQueryTextChangeStateFlow()
         viewModel.observeQueryChanges(query)
     }

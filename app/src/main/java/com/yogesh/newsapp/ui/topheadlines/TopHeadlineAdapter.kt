@@ -1,20 +1,19 @@
 package com.yogesh.newsapp.ui.topheadlines
 
-import android.net.Uri
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.browser.customtabs.CustomTabsIntent
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.yogesh.newsapp.data.model.Article
 import com.yogesh.newsapp.databinding.TopHeadlineRecyclerItemBinding
+import com.yogesh.newsapp.utils.ItemClickListener
 
 class TopHeadlineAdapter(private val arrayList: ArrayList<Article>):RecyclerView.Adapter<TopHeadlineAdapter.DataViewHolder>() {
 
-
+    lateinit var itemClickListener: ItemClickListener<Article>
     class DataViewHolder(private val binding: TopHeadlineRecyclerItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(article: Article) {
+        fun bind(article: Article,itemClickListener: ItemClickListener<Article>) {
             binding.textViewTitle.text = article.title
             binding.textViewDescription.text = article.description
             binding.textViewSource.text = article.source.name
@@ -22,9 +21,7 @@ class TopHeadlineAdapter(private val arrayList: ArrayList<Article>):RecyclerView
                 .load(article.urlToImage)
                 .into(binding.imageViewBanner)
             itemView.setOnClickListener {
-                val builder = CustomTabsIntent.Builder()
-                val customTabsIntent = builder.build()
-                customTabsIntent.launchUrl(it.context, Uri.parse(article.url))
+                itemClickListener(article)
             }
         }
     }
@@ -44,7 +41,7 @@ class TopHeadlineAdapter(private val arrayList: ArrayList<Article>):RecyclerView
     }
 
     override fun onBindViewHolder(holder: DataViewHolder, position: Int) {
-        holder.bind(arrayList[position])
+        holder.bind(arrayList[position], itemClickListener)
     }
 
     fun addData(list: List<Article>) {

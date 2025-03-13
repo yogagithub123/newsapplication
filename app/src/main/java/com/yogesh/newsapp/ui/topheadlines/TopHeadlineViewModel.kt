@@ -89,10 +89,11 @@ class TopHeadlineViewModel @Inject constructor(private val topHeadlineRepository
 
     fun observeQueryChanges(query: StateFlow<String>) {
         viewModelScope.launch { query
-                .debounce(3000)
+                .debounce(1000)
                 .filter { it.isNotEmpty() }
                 .distinctUntilChanged()
                 .flatMapLatest { query ->
+                    _uiState.value = UiState.Loading
                     topHeadlineRepository.getHeadlinesByQuery(query)
                         .catch { e ->
                             _uiState.value = UiState.Error(e.toString())

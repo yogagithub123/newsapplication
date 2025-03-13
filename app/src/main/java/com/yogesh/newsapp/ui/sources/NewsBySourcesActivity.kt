@@ -2,45 +2,50 @@ package com.yogesh.newsapp.ui.sources
 
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.browser.customtabs.CustomTabsIntent
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.yogesh.newsapp.NewsApplication
-import com.yogesh.newsapp.data.model.Sources
-import com.yogesh.newsapp.databinding.ActivitySourcesBinding
-import com.yogesh.newsapp.di.component.DaggerSourceActivityComponent
-import com.yogesh.newsapp.di.component.SourceActivityComponent
-import com.yogesh.newsapp.di.module.SourcesModule
-import com.yogesh.newsapp.ui.topheadlines.TopHeadlineActivity
-import com.yogesh.newsapp.utils.Constant.RESOURCES
+import com.yogesh.newsapp.R
+import com.yogesh.newsapp.data.model.Article
+import com.yogesh.newsapp.databinding.ActivityNewsBySourcesBinding
+import com.yogesh.newsapp.di.component.DaggerNewsBySourcesActivityComponent
+import com.yogesh.newsapp.di.component.NewsBySourcesActivityComponent
+import com.yogesh.newsapp.di.module.NewsBySourceModule
+import com.yogesh.newsapp.ui.common.UiState
 import jakarta.inject.Inject
 import kotlinx.coroutines.launch
-import com.yogesh.newsapp.ui.common.UiState
 
-class SourcesActivity : AppCompatActivity() {
-    companion object{
-        fun getStartIntent(context: Context): Intent {
-            return Intent(context, SourcesActivity::class.java)
+class NewsBySourcesActivity : AppCompatActivity() {
+    @Inject
+    lateinit var viewModel: NewsBySourceViewModel
+    @Inject
+    lateinit var adapter: NewsBySourcesAdapter
+    private lateinit var binding:ActivityNewsBySourcesBinding
+    private lateinit var newsBySourcesActivityComponent: NewsBySourcesActivityComponent
+    private val EXTRAS_SOURCE_NAME="source"
+
+    fun getStartIntent(context: Context, source:String): Intent {
+        return Intent(context, NewsBySourcesActivity::class.java).apply {
+            putExtra(EXTRAS_SOURCE_NAME,source)
+
         }
     }
-    private lateinit var binding:ActivitySourcesBinding
-    private lateinit var sourcesComponent: SourceActivityComponent
-    @Inject
-    lateinit var adapter: SourcesAdapter
-    @Inject
-    lateinit var viewModel: SourcesViewModel
     override fun onCreate(savedInstanceState: Bundle?) {
         getDependencies()
         super.onCreate(savedInstanceState)
-        binding=ActivitySourcesBinding.inflate(layoutInflater)
+        binding= ActivityNewsBySourcesBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setUpUi()
         setupObserver()
+        viewModel.fetchNewsByResources(intent.getStringExtra(EXTRAS_SOURCE_NAME)!!)
     }
     private fun setUpUi() {
         val recyclerView = binding.recyclerView
@@ -53,8 +58,9 @@ class SourcesActivity : AppCompatActivity() {
         )
         recyclerView.adapter = adapter
         adapter.itemClickListener={
-            val intent=NewsBySourcesActivity().getStartIntent(this,it.name)
-            startActivity(intent)
+            val builder = CustomTabsIntent.Builder()
+            val customTabsIntent = builder.build()
+            customTabsIntent.launchUrl(this, Uri.parse(it.url))
         }
     }
 
@@ -64,12 +70,12 @@ class SourcesActivity : AppCompatActivity() {
                 when (it) {
                     is UiState.Success -> {
                         binding.progressBar.visibility = View.GONE
-                        if (it.data.isEmpty()) {
-                            Toast.makeText(this@SourcesActivity, "No Data Found", Toast.LENGTH_LONG)
+                        if(it.data.isEmpty()){
+                            Toast.makeText(this@NewsBySourcesActivity, R.string.no_record_found, Toast.LENGTH_LONG)
                                 .show()
-                        } else {
+                        }else {
                             renderList(it.data)
-                            Log.d("Data", "${it.data.size}")
+                            Log.d("Data***", "${it.data.size}")
                             binding.recyclerView.visibility = View.VISIBLE
                         }
                     }
@@ -79,7 +85,7 @@ class SourcesActivity : AppCompatActivity() {
                     }
                     is UiState.Error -> {
                         binding.progressBar.visibility = View.GONE
-                        Toast.makeText(this@SourcesActivity, it.message, Toast.LENGTH_LONG)
+                        Toast.makeText(this@NewsBySourcesActivity, it.message, Toast.LENGTH_LONG)
                             .show()
                     }
                 }
@@ -87,16 +93,17 @@ class SourcesActivity : AppCompatActivity() {
         }
     }
 
-    private fun renderList(sourcesList: List<Sources>) {
-        adapter.addData(sourcesList)
+    private fun renderList(articleList: List<Article>) {
+        adapter.addData(articleList)
         adapter.notifyDataSetChanged()
     }
+
     private fun getDependencies() {
-        sourcesComponent=DaggerSourceActivityComponent
+        newsBySourcesActivityComponent= DaggerNewsBySourcesActivityComponent
             .builder()
             .applicationComponent((application as NewsApplication).applicationComponent)
-            .sourcesModule(SourcesModule(this))
+            .newsBySourceModule(NewsBySourceModule(this))
             .build()
-        sourcesComponent.inject(this)
+        newsBySourcesActivityComponent.inject(this)
     }
 }
